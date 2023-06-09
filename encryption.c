@@ -2,24 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "encryption.h"
-
-char* read_file_content(FILE* f, int file_size){
-    char* file_data = (char*)malloc(file_size + 1);
+char* read_file_content(FILE* f, int* file_size){
+    char* file_data = (char*)malloc((*file_size) + 1);
     char symbol = fgetc(f);
-    int i;
-    for(i = 0; i < file_size; symbol = fgetc(f), i++){
+    int i, j = 0;
+    for(i = 0; i < *file_size; symbol = fgetc(f), i++){
+        if(symbol == '\n') j++;
         file_data[i] = symbol;
     }
-    file_data[i] = '\0';
+    file_data[i - j] = '\0';
+    (*file_size) -= j;
     return file_data;
 }
 
-void encrypt_file(FILE* fin, int file_size, char* password){
-    char* file_data = (char*)malloc(file_size + 1);
-    file_data = read_file_content(fin, file_size);
+void encrypt_file(FILE* fin, int* file_size, char* password){
+    char* file_data = read_file_content(fin, file_size);
     for(int i = 0; i < strlen(password); i++){
-        for(int j = 0; j < file_size; j++){
+        for(int j = 0; j < strlen(file_data); j++){
             if(password[i] != file_data[j]){
                 file_data[j] = file_data[j] ^ password[i];
             }
@@ -27,15 +26,15 @@ void encrypt_file(FILE* fin, int file_size, char* password){
     }
 
     rewind(fin);
-    fwrite(file_data, sizeof(char), file_size, fin);
+    fwrite(file_data, sizeof(char), *file_size, fin);
     free(file_data);
 }
 
-void decrypt_file(FILE* fin, int file_size, char* password) {
+void decrypt_file(FILE* fin, int* file_size, char* password) {
     char* file_data = read_file_content(fin, file_size);
 
     for(int i = strlen(password); i >= 0 ; i--){
-        for(int j = 0; j < file_size; j++){
+        for(int j = 0; j < strlen(file_data); j++){
             if(password[i] != file_data[j]){
                 file_data[j] = file_data[j] ^ password[i];
             }
@@ -43,7 +42,7 @@ void decrypt_file(FILE* fin, int file_size, char* password) {
     }
 
     rewind(fin);
-    fwrite(file_data, sizeof(char), file_size, fin);
+    fwrite(file_data, sizeof(char), *file_size, fin);
     free(file_data);
 }
 
@@ -64,18 +63,16 @@ int main(){
     scanf("%s", password);
 
     rewind(fdata);
-    encrypt_file(fdata, file_size, password);
+    encrypt_file(fdata, &file_size, password);
     rewind(fdata);
 
-    char* input = read_file_content(fdata, file_size);
-    printf("Encrypted: %s\n", input);
+    char* input = read_file_content(fdata, &file_size);
 
     rewind(fdata);
-    decrypt_file(fdata, file_size, password);
+    decrypt_file(fdata, &file_size, password);
     rewind(fdata);
 
-    input = read_file_content(fdata, file_size);
-    printf("Decrypted: %s\n", input);
+    input = read_file_content(fdata, &file_size);
 
     fclose(fdata);
 

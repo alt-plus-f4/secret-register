@@ -18,8 +18,8 @@ int main(){
     
     char* filename = login(user);
     char password[100];
-    
-    FILE* fdata = fopen(filename, "r+");
+
+    FILE* fdata = fopen(filename, "rb+");
 
     if(fdata == NULL){
         printf("Error. File can't open");
@@ -36,6 +36,8 @@ int main(){
     rewind(fdata);
     decrypt_file(fdata, &file_size, password);
     rewind(fdata);
+
+    fclose(fdata);
 
     int choice;
     do{
@@ -76,7 +78,12 @@ int main(){
         }
         printf("\n");
     } while (choice != 5);
-    
+
+    fdata = fopen(filename, "rb+");
+
+    fseek(fdata, 0, SEEK_END);
+    file_size = ftell(fdata);
+
     rewind(fdata);
     encrypt_file(fdata, &file_size, password);
     rewind(fdata);

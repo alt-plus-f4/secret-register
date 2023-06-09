@@ -2,50 +2,78 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* encrypt(char* input, char* password){
-    for(int i = 0; i < strlen(password); i++){
-        for(int j = 0; j < strlen(input); j++){
-            if(password[i] != input[j]){
-                input[j] = input[j] ^ password[i]; 
-            }
-        }
-        }
-    return input;
+char* read_file_content(FILE* f, int file_size){
+    char* file_data = (char*)malloc(file_size + 1);
+    char symbol = fgetc(f);
+    int i;
+    for(i = 0; i < file_size; symbol = fgetc(f), i++){
+        file_data[i] = symbol;
+    }
+    file_data[i] = '\0';
+    return file_data;
 }
 
-char* decrypt(char* input, char* password) {
-    for(int i = strlen(password) - 1; i >= 0; i--){
-        for(int j = 0; j < strlen(input); j++){
-            if(password[i] != input[j]){
-                input[j] = input[j] ^ password[i]; 
+void encrypt_file(FILE* fin, int file_size, char* password){
+    char* file_data = (char*)malloc(file_size + 1);
+    file_data = read_file_content(fin, file_size);
+    for(int i = 0; i < strlen(password); i++){
+        for(int j = 0; j < file_size; j++){
+            if(password[i] != file_data[j]){
+                file_data[j] = file_data[j] ^ password[i];
             }
         }
     }
-    return input;
+
+    rewind(fin);
+    fwrite(file_data, sizeof(char), file_size, fin);
+    free(file_data);
+}
+
+void decrypt_file(FILE* fin, int file_size, char* password) {
+    char* file_data = read_file_content(fin, file_size);
+
+    for(int i = strlen(password); i >= 0 ; i--){
+        for(int j = 0; j < file_size; j++){
+            if(password[i] != file_data[j]){
+                file_data[j] = file_data[j] ^ password[i];
+            }
+        }
+    }
+
+    rewind(fin);
+    fwrite(file_data, sizeof(char), file_size, fin);
+    free(file_data);
 }
 
 int main(){
-  /*  char* password = (char*)malloc(100);
-    char* result = (char*)malloc(100);
-    char* input = (char*)malloc(100);
-    char* crypted = (char*)malloc(100);
-    FILE* fdata = fopen("data.txt", "r");
+    char password[100];
+    FILE* fdata = fopen("data.txt", "r+");
     if(fdata == NULL){
         printf("Error. File can't open");
         return -1;
     }
-    fscanf(fdata, "%s", input);
-    printf("%s", input);
-    printf("\nEnter password: ");
+    
+    fseek(fdata, 0, SEEK_END);
+    int file_size = ftell(fdata);
+    rewind(fdata);
+
+    printf("Enter password: ");
     scanf("%s", password);
 
-    crypted = encrypt(input, password);
+    rewind(fdata);
+    encrypt_file(fdata, file_size, password);
+    rewind(fdata);
+
+    char* input = read_file_content(fdata, file_size);
+    printf("Encrypted: %s\n", input);
+
+    rewind(fdata);
+    decrypt_file(fdata, file_size, password);
+    rewind(fdata);
+
+    input = read_file_content(fdata, file_size);
+    printf("Decrypted: %s\n", input);
+
     fclose(fdata);
-    printf("Encrypted: %s\n", crypted);
-    result = decrypt(crypted, password);
-    printf("Decrypted: %s\n", result);
-    fdata = fopen("data.txt", "w");
-    fprintf(fdata, "%s",result);
-    fclose(fdata);*/
     return 0;
 }

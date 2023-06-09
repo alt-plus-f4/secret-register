@@ -5,11 +5,13 @@
 char* read_file_content(FILE* f, int file_size){
     char* file_data = (char*)malloc(file_size + 1);
     char symbol = fgetc(f);
-    int i;
+    int i, j = 0;
+    printf("%d", file_size);
     for(i = 0; i < file_size; symbol = fgetc(f), i++){
+        if(symbol == '\n') j++;
         file_data[i] = symbol;
     }
-    file_data[i] = '\0';
+    file_data[i - j] = '\0';
     return file_data;
 }
 

@@ -17,9 +17,8 @@ int main(){
 	} while (strlen(user) >= MAX_USERNAME_LENGTH);
     
     char* filename = login(user);
-    printf("%s", filename);
-
     char password[100];
+    
     FILE* fdata = fopen(filename, "r+");
 
     if(fdata == NULL){

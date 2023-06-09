@@ -21,7 +21,7 @@ int is_valid_date(const char *date_str){
     return 1;
 }
 
-void add_new_story(){
+void add_new_story(const char* filename){
     Story new_story;
     
     do{
@@ -38,7 +38,7 @@ void add_new_story(){
     scanf(" %[^\n]", new_story.story);
     getchar();
 
-    FILE *file = fopen("stories.txt", "a");
+    FILE *file = fopen(filename, "a");
     
     if (file != NULL) {
         fprintf(file, "%s|%s|%s\n", new_story.date, new_story.title, new_story.story);
@@ -50,8 +50,8 @@ void add_new_story(){
         printf("Failed to open the file.\n");
 }
 
-void display_stories(){
-    FILE *file = fopen("stories.txt", "r");
+void display_stories(const char* filename){
+    FILE *file = fopen(filename, "r");
 
     if (file != NULL) {
         char line[MAX_LINE_LEN];
@@ -83,13 +83,13 @@ void display_stories(){
         printf("Failed to open the file.\n");
 }
 
-void display_story_by_date(){
+void display_story_by_date(const char* filename){
     char date[11];
     printf("Enter the date of the story: ");
     scanf("%10s", date);
     getchar();
 
-    FILE *file = fopen("stories.txt", "r");
+    FILE *file = fopen(filename, "r");
     if (file != NULL) {
         char line[MAX_LINE_LEN];
         
@@ -111,13 +111,13 @@ void display_story_by_date(){
         printf("Failed to open the file.\n");
 }
 
-void display_story_by_title(){
+void display_story_by_title(const char* filename){
     char title[MAX_TITLE_LENGTH + 1];
     printf("Enter the title of the story: ");
     scanf("%30[^\n]", title);
     getchar();
 
-    FILE *file = fopen("stories.txt", "r");
+    FILE *file = fopen(filename, "r");
     if (file != NULL) {
         char line[MAX_LINE_LEN];
         

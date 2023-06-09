@@ -8,7 +8,7 @@ typedef struct{
 } Story;
 
 int is_valid_date(const char *date_str);
-void add_new_story();
-void display_stories();
-void display_story_by_date();
-void display_story_by_title();
+void add_new_story(const char* filename);
+void display_stories(const char* filename);
+void display_story_by_date(const char* filename);
+void display_story_by_title(const char* filename);

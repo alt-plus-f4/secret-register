@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "encryption.h"
+
 char* read_file_content(FILE* f, int file_size){
     char* file_data = (char*)malloc(file_size + 1);
     char symbol = fgetc(f);
@@ -48,6 +50,7 @@ void decrypt_file(FILE* fin, int file_size, char* password) {
 int main(){
     char password[100];
     FILE* fdata = fopen("data.txt", "r+");
+
     if(fdata == NULL){
         printf("Error. File can't open");
         return -1;
@@ -75,5 +78,6 @@ int main(){
     printf("Decrypted: %s\n", input);
 
     fclose(fdata);
+
     return 0;
 }

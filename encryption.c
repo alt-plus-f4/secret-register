@@ -6,7 +6,7 @@
 
 char* read_file_content(FILE* f, int* file_size){
     char* file_data = (char*)malloc((*file_size) + 1);
-    fread(file_data, *file_size, sizeof(char), f);
+    fread(file_data, sizeof(char), *file_size, f);
     return file_data;
 }
 
@@ -20,7 +20,7 @@ void encrypt_file(FILE* fin, int* file_size, char* password){
         }
     }
     rewind(fin);
-    fwrite(file_data, *file_size, sizeof(char), fin);
+    fwrite(file_data, sizeof(char), *file_size, fin);
     free(file_data);
 }
 
@@ -34,6 +34,6 @@ void decrypt_file(FILE* fin, int* file_size, char* password) {
         }
     }
     rewind(fin);
-    fwrite(file_data, *file_size, sizeof(char), fin);
+    fwrite(file_data, sizeof(char), *file_size, fin);
     free(file_data);
 }
